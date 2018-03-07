@@ -1,4 +1,6 @@
 #include "NGLScene.h"
+#include "Boid.h"
+#include "WindowParams.h"
 #include <QGuiApplication>
 #include <QMouseEvent>
 
@@ -98,7 +100,11 @@ void NGLScene::initializeGL()
 
   // load these values to the shader as well
   light.loadToShader( "light" );
-   buildVAO();
+   //init vao
+
+  test.init();
+  NGLScene::buildVAO(test.pos,test.size);
+
 }
 
 
@@ -145,8 +151,17 @@ void NGLScene::paintGL()
   m_mouseGlobalTX.m_m[ 3 ][ 1 ] = m_modelPos.m_y;
   m_mouseGlobalTX.m_m[ 3 ][ 2 ] = m_modelPos.m_z;
 
-  // get the VBO instance and draw the built in teapot
+
+
+  // get the VBO instance and draw the built in boids
   ngl::VAOPrimitives* prim = ngl::VAOPrimitives::instance();
+  //early my stuff
+
+
+
+  test.update();
+  NGLScene::buildVAO(test.pos,test.size);
+
   // draw
   loadMatricesToShader();
 //------------------------------MYSTUFF-------------------------------------
@@ -159,8 +174,9 @@ void NGLScene::paintGL()
 
   m_vao->bind();
   //shader->setUniform("MVP",MVP);
-  m_transformation.m_scale(0.1f,0.1f,0.1f);
+
   m_vao->draw();
+
 
 //  ngl::Mat4 tx;
 //  tx.translate(0,2,0);
@@ -171,29 +187,30 @@ void NGLScene::paintGL()
 
 
   m_vao->unbind();
-
+    update();
 }
 
 //---------------------------my stolen function------------------------------
 
-void NGLScene::buildVAO()
+void NGLScene::buildVAO(ngl::Vec3 pos, float s)
 {
   std::array<ngl::Vec3,12> verts=
   {{
-    ngl::Vec3(0,1,1),
-    ngl::Vec3(0,0,-1),
-    ngl::Vec3(-0.5,0,1),
-    ngl::Vec3(0,1,1),
-    ngl::Vec3(0,0,-1),
-    ngl::Vec3(0.5,0,1),
-    ngl::Vec3(0,1,1),
-    ngl::Vec3(0,0,1.5),
-    ngl::Vec3(-0.5,0,1),
-    ngl::Vec3(0,1,1),
-    ngl::Vec3(0,0,1.5),
-    ngl::Vec3(0.5,0,1)
+
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (1 * s),pos.m_z + (1 * s)),
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (0 * s),pos.m_z - (1 * s)),
+    ngl::Vec3(pos.m_x - (0.5 * s),pos.m_y + (0 * s),pos.m_z + (1 * s)),
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (1 * s),pos.m_z + (1 * s)),
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (0 * s),pos.m_z - (1 * s)),
+    ngl::Vec3(pos.m_x + (0.5 * s),pos.m_y + (0 * s),pos.m_z + (1 * s)),
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (1 * s),pos.m_z + (1 * s)),
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (0 * s),pos.m_z + (1.5 * s)),
+    ngl::Vec3(pos.m_x + - (0.5 * s),pos.m_y + (0 * s),pos.m_z + (1 * s)),
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (1 * s),pos.m_z + (1 * s)),
+    ngl::Vec3(pos.m_x + (0 * s),pos.m_y + (0 * s),pos.m_z + (1.5 * s)),
+    ngl::Vec3(pos.m_x + (0.5 * s),pos.m_y + (0 * s),pos.m_z + (1 * s))
   }};
-  std::cout<<"sizeof(verts) "<<sizeof(verts)<<" sizeof(ngl::Vec3) "<<sizeof(ngl::Vec3)<<"\n";
+  //std::cout<<"sizeof(verts) "<<sizeof(verts)<<" sizeof(ngl::Vec3) "<<sizeof(ngl::Vec3)<<"\n";
 
   // create a vao as a series of GL_TRIANGLES
   m_vao.reset(ngl::VAOFactory::createVAO(ngl::simpleVAO,GL_TRIANGLES) );
@@ -211,6 +228,7 @@ void NGLScene::buildVAO()
  // now unbind
   m_vao->unbind();
 }
+
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -242,6 +260,9 @@ void NGLScene::keyPressEvent( QKeyEvent* _event )
     case Qt::Key_N:
       showNormal();
       break;
+  case Qt::Key_M:
+    test.vel += ngl::Vec3(0,0,0.05);
+    break;
     case Qt::Key_Space :
       m_win.spinXFace=0;
       m_win.spinYFace=0;
@@ -250,5 +271,4 @@ void NGLScene::keyPressEvent( QKeyEvent* _event )
     default:
       break;
   }
-  update();
 }

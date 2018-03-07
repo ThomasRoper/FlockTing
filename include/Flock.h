@@ -6,13 +6,13 @@
 #include <ngl/SimpleVAO.h>
 #include <memory>
 #include "Boid.h"
-class Emitter
+class Flock
 {
   public :
-    Emitter(ngl::Vec3 _pos, size_t nParticles);
+    Flock(const int num, ngl::Vec3 pos);
     void draw();
     void update();
-    void updatePosition(ngl::Real _dx, ngl::Real _dy, ngl::Real _dz);
+    void updatePosition();
   private :
 
     //void resetParticle(Particle &io_p);

@@ -27,7 +27,8 @@ SOURCES += \
         src/main.cpp \
     src/NGLScene.cpp \
     src/NGLSceneMouseControls.cpp \
-    src/Flock.cpp
+    src/Flock.cpp \
+    src/Boid.cpp
 
 
 #The h files locations

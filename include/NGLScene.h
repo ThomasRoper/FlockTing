@@ -5,6 +5,7 @@
 #include <ngl/Colour.h>
 #include <ngl/Light.h>
 #include <ngl/Text.h>
+#include "Boid.h"
 #include <ngl/Transformation.h>
 #include <QOpenGLWindow>
 //----------------------------------------------------------------------------------------------------------------------
@@ -28,6 +29,9 @@ class NGLScene : public QOpenGLWindow
 {
   Q_OBJECT
 public:
+  //#shitvcode
+    Boid test;
+
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief ctor for our NGL drawing class
   /// @param [in] parent the parent window to the class
@@ -50,7 +54,8 @@ public:
   /// @brief this is called everytime we want to draw the scene
   //----------------------------------------------------------------------------------------------------------------------
   void resizeGL(int _w, int _h) override;
-
+  //is a stolen function
+  void buildVAO(ngl::Vec3 pos, float s);
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the windows params such as mouse and rotations etc
@@ -101,7 +106,7 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   void wheelEvent(QWheelEvent *_event) override;
   //is a stolen function
-  void buildVAO();
+
   ngl::Transformation m_transformation;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief a simple light use to illuminate the screen
