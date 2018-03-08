@@ -16,6 +16,7 @@
 NGLScene::NGLScene()
 {
   setTitle( "Qt5 Simple NGL Demo" );
+  test = Boid();
 }
 
 
@@ -102,8 +103,8 @@ void NGLScene::initializeGL()
   light.loadToShader( "light" );
    //init vao
 
-  test.init();
-  NGLScene::buildVAO(test.pos,test.size);
+//  test.init();
+  NGLScene::buildVAO( test.getPos(),test.getSize() );
 
 }
 
@@ -160,7 +161,7 @@ void NGLScene::paintGL()
 
 
   test.update();
-  NGLScene::buildVAO(test.pos,test.size);
+  NGLScene::buildVAO(test.getPos(),test.getSize());
 
   // draw
   loadMatricesToShader();
@@ -187,7 +188,8 @@ void NGLScene::paintGL()
 
 
   m_vao->unbind();
-    update();
+  update();
+
 }
 
 //---------------------------my stolen function------------------------------
@@ -260,9 +262,7 @@ void NGLScene::keyPressEvent( QKeyEvent* _event )
     case Qt::Key_N:
       showNormal();
       break;
-  case Qt::Key_M:
-    test.vel += ngl::Vec3(0,0,0.05);
-    break;
+
     case Qt::Key_Space :
       m_win.spinXFace=0;
       m_win.spinYFace=0;
@@ -271,4 +271,6 @@ void NGLScene::keyPressEvent( QKeyEvent* _event )
     default:
       break;
   }
+  update();
+
 }
