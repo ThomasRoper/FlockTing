@@ -5,25 +5,29 @@
 #include "ngl/Vec4.h"
 
 
+// pre declare the Flock
+class Flock;
 
 class Boid
 {
 public:
-    Boid();
+    Boid(ngl::Vec3 pos, Flock *ting);
     ~Boid() = default;
     void update();
     void steering();
     void attract();
     void arrive();
+    void draw() const;
     void ApplyForce( ngl::Vec3 const & x );
     ngl::Vec3 getPos() const { return m_position; }
+    ngl::Vec3 getTarget() const { return m_target; }
     float getSize() const { return m_size; }
 
 private:
-    bool m_respawn = false;
+    bool m_arrived = false;
     int m_life = 0;
-    float m_maxspeed = 0.03f;
-    float m_maxforce = 0.02f;
+    float m_maxspeed = 0.5f;
+    float m_maxforce = 0.5f;
     float m_size;
     /// \brief m_velocity of the boid
     ngl::Vec3 m_velocity;
@@ -33,10 +37,12 @@ private:
     ngl::Vec3 m_acceleration;
     /// \brief m_position
     ngl::Vec3 m_position;
+    ngl::Vec3 m_target;
     /// \brief ScaleVec
     /// \param v
     /// \param limlen
     void ScaleVec(ngl::Vec3 * v, float limlen);
+    const Flock *m_ting;
 };
 
 

@@ -4,8 +4,9 @@
 #include <ngl/Camera.h>
 #include <ngl/Colour.h>
 #include <ngl/Light.h>
+#include "Flock.h"
 #include <ngl/Text.h>
-#include "Boid.h"
+#include "QTime"
 #include <ngl/Transformation.h>
 #include <QOpenGLWindow>
 //----------------------------------------------------------------------------------------------------------------------
@@ -30,7 +31,15 @@ class NGLScene : public QOpenGLWindow
   Q_OBJECT
 public:
   //#shitvcode
-    Boid test;
+    //Boid test;
+    /// @brief flag for the fps timer
+    int m_fpsTimer;
+    /// @brief the fps to draw
+    int m_fps;
+    int m_frames;
+    QTime m_timer;
+    //Flock* ting;
+    std::unique_ptr<Flock>ting;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief ctor for our NGL drawing class
@@ -55,7 +64,8 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   void resizeGL(int _w, int _h) override;
   //is a stolen function
-  void buildVAO(ngl::Vec3 pos, float s);
+  //void buildVAO(ngl::Vec3 pos, float s);
+
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief the windows params such as mouse and rotations etc
@@ -112,6 +122,10 @@ private:
   /// @brief a simple light use to illuminate the screen
   //----------------------------------------------------------------------------------------------------------------------
   std::unique_ptr<ngl::AbstractVAO> m_vao;
+
+
+  //another one
+  void timerEvent(QTimerEvent *);
 };
 
 

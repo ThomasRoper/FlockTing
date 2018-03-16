@@ -16,10 +16,11 @@
 #include <ngl/VAOPrimitives.h>
 #include <math.h>
 
-Boid::Boid()
+Boid::Boid(ngl::Vec3 pos,  Flock *ting)
 {
-   m_position = ngl::Vec3(0,0,0);
+   m_position = pos;
    m_size = 0.2f;
+   m_ting = ting;
 }
 
 //-------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ void Boid::update()
    m_position.m_z += m_velocity.m_z;
 
 
-   m_life += 1;
+   //m_life += 1;
    if (m_life > 500)
    {
         m_position = ngl::Vec3(0,0,0);
@@ -63,7 +64,7 @@ void Boid::steering()
 void Boid::attract()
 {
     //find the desired direction
-    ngl::Vec3 desired = ngl::Vec3(1,1,0) - m_position;
+    ngl::Vec3 desired = ngl::Vec3(-2,0,-2) - m_position;
 
     //set desired's magnitude to maxspeed
     ScaleVec(&desired,m_maxspeed);
@@ -83,18 +84,18 @@ void Boid::attract()
 void Boid::arrive()
 {
     //find the desired direction
-    ngl::Vec3 desired = ngl::Vec3(-0.5,0,-1) - m_position;
+    ngl::Vec3 desired = ngl::Vec3 (1,0,-1) - m_position;
     //then find its lenth
     float deslen = desired.length();
     //set desired's magnitude to maxspeed
-    std::cout<<"deslen = "<<deslen<<".\n";
+    //std::cout<<"deslen = "<<deslen<<".\n";
 
     if (deslen < 1.0)
     {
         float limspeed = m_maxspeed;
          ScaleVec(&desired, limspeed);
     }
-    else if (deslen < 0.0)
+    else if (deslen = 0.0)
     {
         float limspeed = 0;
          ScaleVec(&desired, limspeed);
@@ -112,21 +113,30 @@ void Boid::arrive()
     ScaleVec(&m_destination,m_maxforce);
 
     //then add to accelleration
-    ApplyForce(m_destination);
+    if (!m_arrived)ApplyForce(m_destination);
 }
 
 //-------------------------------------------------------------------------------
 
 void Boid::ScaleVec(ngl::Vec3 * v, float limlen)
 {
-   std::cout<<"limlen = "<<limlen<<"\n";
+   //std::cout<<"limlen = "<<limlen<<"\n";
    float vlen = sqrt(((v->m_x) * (v->m_x)) + ((v->m_y) * (v->m_y)) + ((v->m_z) * (v->m_z)));
+   /*
    if (vlen != 0)
    {
+
    float ratio = (limlen/vlen);
-   std::cout<<"ratio = "<<ratio<<". x/y -> "<<limlen<<"/"<<vlen<<".\n";
+   //std::cout<<"ratio = "<<ratio<<". x/y -> "<<limlen<<"/"<<vlen<<".\n";
    *v *= ratio;
    }
+   */
+   if (vlen != 0)
+   {
+       *v /= vlen;
+       *v *= limlen;
+   }
+
 }
 
 //-------------------------------------------------------------------------------
@@ -135,5 +145,44 @@ void Boid::ApplyForce( ngl::Vec3 const & x)
 {
     m_acceleration += x;
 }
+
+//-------------------------------------------------------------------------------
+
+//kstuf
+
+void Boid::draw() const
+{
+  // get the VBO instance and draw the built in teapot
+
+  ngl::Transformation trans;
+  ngl::ShaderLib *shader=ngl::ShaderLib::instance();
+  shader->use(m_ting->getShaderName());
+   trans.setMatrix(m_ting->getGlobalTransform());
+   trans.addPosition(m_position);
+
+
+
+  ngl::Mat4 MV;
+  ngl::Mat4 MVP;
+  ngl::Mat3 normalMatrix;
+  ngl::Mat4 M;
+
+  M=trans.getMatrix();
+ //M=m_ting->getGlobalTransform();
+  MV=m_ting->getCam()->getViewMatrix()*M;
+  MVP=m_ting->getCam()->getProjectionMatrix()*M;
+  normalMatrix=MV;
+  normalMatrix.inverse().transpose();
+  shader->setUniform("MV",MV);
+  shader->setUniform("MVP",MVP);
+
+
+  shader->setUniform("normalMatrix",normalMatrix);
+  shader->setUniform("M",M);
+  ngl::VAOPrimitives *mesh=ngl::VAOPrimitives::instance();
+  mesh->draw("sphere");
+
+}
+
 
 //-------------------------------------------------------------------------------
