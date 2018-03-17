@@ -25,9 +25,8 @@ public:
 
 private:
     bool m_arrived = false;
-    int m_life = 0;
-    float m_maxspeed = 0.5f;
-    float m_maxforce = 0.5f;
+    float m_maxspeed = 0.00001f;
+    float m_maxforce = 0.00001f;
     float m_size;
     /// \brief m_velocity of the boid
     ngl::Vec3 m_velocity;

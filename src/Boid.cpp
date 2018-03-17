@@ -42,12 +42,7 @@ void Boid::update()
    m_position.m_z += m_velocity.m_z;
 
 
-   //m_life += 1;
-   if (m_life > 500)
-   {
-        m_position = ngl::Vec3(0,0,0);
-        m_life = 0;
-   }
+
 
    m_acceleration = ngl::Vec3(0,0,0);
 }
@@ -157,28 +152,15 @@ void Boid::draw() const
   ngl::Transformation trans;
   ngl::ShaderLib *shader=ngl::ShaderLib::instance();
   shader->use(m_ting->getShaderName());
-   trans.setMatrix(m_ting->getGlobalTransform());
-   trans.addPosition(m_position);
+   //trans.setMatrix(m_ting->getGlobalTransform());
+   trans.setPosition(m_position);
 
+  ngl::Mat4 MVP=m_ting->getCam()->getVPMatrix() *
+          m_ting->getGlobalTransform() *
+          trans.getMatrix();
 
-
-  ngl::Mat4 MV;
-  ngl::Mat4 MVP;
-  ngl::Mat3 normalMatrix;
-  ngl::Mat4 M;
-
-  M=trans.getMatrix();
- //M=m_ting->getGlobalTransform();
-  MV=m_ting->getCam()->getViewMatrix()*M;
-  MVP=m_ting->getCam()->getProjectionMatrix()*M;
-  normalMatrix=MV;
-  normalMatrix.inverse().transpose();
-  shader->setUniform("MV",MV);
   shader->setUniform("MVP",MVP);
 
-
-  shader->setUniform("normalMatrix",normalMatrix);
-  shader->setUniform("M",M);
   ngl::VAOPrimitives *mesh=ngl::VAOPrimitives::instance();
   mesh->draw("sphere");
 

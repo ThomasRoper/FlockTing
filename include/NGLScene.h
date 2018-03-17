@@ -40,6 +40,7 @@ public:
     QTime m_timer;
     //Flock* ting;
     std::unique_ptr<Flock>ting;
+    ngl::Vec3 m_target;
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief ctor for our NGL drawing class

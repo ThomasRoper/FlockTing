@@ -218,7 +218,7 @@ void NGLScene::paintGL()
 
 void NGLScene::keyPressEvent( QKeyEvent* _event )
 {
-    // that method is called every time the main window recives a key event.
+    // that method is called every time the main window recives a key event.  void loadMatricesToShader();
     // we then switch on the key value and set the camera in the GLWindow
     switch ( _event->key() )
     {
